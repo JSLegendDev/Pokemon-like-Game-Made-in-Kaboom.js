@@ -1,12 +1,5 @@
 function setWorld(worldState, playerObj) {
 
-    add([
-        rect(1280, 720),
-        pos(0,0),
-        color(Color.fromHex('#36A6E0')),
-        fixed()
-    ])
-
     function makeTile(type) {
         return [
             sprite('tile'),
@@ -208,17 +201,20 @@ function setWorld(worldState, playerObj) {
         'npc'
     ])
 
+    function setSprite(spriteName) {
+        if (player.currentSprite !== spriteName) {
+            player.use(sprite(spriteName))
+            player.currentSprite = spriteName
+        }
+    }
+
     onKeyDown('down', () => {
 
         if (player.isInDialogue) {
             return
         }
 
-        const newCurrentSprite = 'player-down'
-        if (player.currentSprite !== newCurrentSprite) {
-            player.use(sprite(newCurrentSprite))
-            player.currentSprite = newCurrentSprite
-        }
+        setSprite('player-down')
         player.move(0, player.speed)
     })
 
@@ -228,12 +224,7 @@ function setWorld(worldState, playerObj) {
             return
         }
 
-        const newCurrentSprite = 'player-up'
-        if (player.currentSprite !== newCurrentSprite) {
-            player.use(sprite(newCurrentSprite))
-            player.currentSprite = newCurrentSprite
-        }
-
+        setSprite('player-up')
         player.move(0, -player.speed)
     })
 
@@ -243,12 +234,7 @@ function setWorld(worldState, playerObj) {
             return
         }
 
-        const newCurrentSprite = 'player-side'
-        if (player.currentSprite !== newCurrentSprite) {
-            player.use(sprite(newCurrentSprite))
-            player.play('walk')
-            player.currentSprite = newCurrentSprite
-        }
+        setSprite('player-side')
         player.flipX = false
         if (player.curAnim() !== 'walk') {
             player.play('walk')
@@ -265,13 +251,7 @@ function setWorld(worldState, playerObj) {
             return
         }
 
-        const newCurrentSprite = 'player-side'
-        if (player.currentSprite !== newCurrentSprite) {
-            player.use(sprite(newCurrentSprite))
-            player.play('walk')
-            player.currentSprite = newCurrentSprite
-        }
-
+        setSprite('player-side')
         player.flipX = true
         if (player.curAnim() !== 'walk') {
             player.play('walk')

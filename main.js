@@ -4,6 +4,8 @@ const ktx = kaboom({
     scale: 0.7
 })
 
+setBackground(Color.fromHex('#36A6E0'))
+
 loadAssets()
 
 scene('world', (worldState) => setWorld(worldState))
