@@ -14,7 +14,6 @@ function setBattle(worldState) {
             fainted: false
         }
     ])
-
     enemyMon.flipX = true
 
     tween(
@@ -134,10 +133,7 @@ function setBattle(worldState) {
 
     let phase = 'player-selection'
     onKeyPress('space', () => {
-        
-        if (playerMon.fainted || enemyMon.fainted) {
-            return
-        }
+        if (playerMon.fainted || enemyMon.fainted) return
 
         if (phase === 'player-selection') {
             content.text = '> Tackle'
@@ -203,14 +199,11 @@ function setBattle(worldState) {
 
         if (enemyMonHealthBar.width < 0 && !enemyMon.fainted) {
             makeMonDrop(enemyMon)
-            
             content.text = worldState.enemyName.toUpperCase() + ' fainted!'
             enemyMon.fainted = true
-
             setTimeout(() => {
                 content.text = 'MUSHROOM won the battle!'
             }, 1000)
-
             setTimeout(() => {
                 worldState.faintedMons.push(worldState.enemyName)
                 go('world', worldState)
@@ -219,19 +212,15 @@ function setBattle(worldState) {
 
         if (playerMonHealthBar.width < 0 && !playerMon.fainted) {
             makeMonDrop(playerMon)
-            
             content.text = 'MUSHROOM fainted!'
             playerMon.fainted = true
-
             setTimeout(() => {
                 content.text = 'You rush to get MUSHROOM healed!'
             }, 1000)
-
             setTimeout(() => {
                 worldState.playerPos = vec2(500,700)
                 go('world', worldState)
             }, 2000)
         }
-
     })
 }

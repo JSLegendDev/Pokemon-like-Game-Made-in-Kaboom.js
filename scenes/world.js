@@ -1,5 +1,4 @@
-function setWorld(worldState, playerObj) {
-
+function setWorld(worldState) {
     function makeTile(type) {
         return [
             sprite('tile'),
@@ -127,45 +126,19 @@ function setWorld(worldState, playerObj) {
         }
     }
 
-    add([
-        sprite('mini-mons'),
-        area(),
-        body({isStatic: true}),
-        'cat',
-        pos(100,700),
-        scale(4)
-    ])
+    add([sprite('mini-mons'), area(), body({isStatic: true}), pos(100,700), scale(4), 'cat'])
 
-    const spiderMon = add([
-        sprite('mini-mons'),
-        area(),
-        body({isStatic: true}),
-        pos(400,300),
-        scale(4),
-        'spider'
-    ])
+    const spiderMon = add([sprite('mini-mons'), area(), body({isStatic: true}), pos(400,300), scale(4), 'spider'])
     spiderMon.play('spider')
     spiderMon.flipX = true
 
-    const centipedeMon = add([
-        sprite('mini-mons'),
-        area(), 
-        body({isStatic: true}),
-        pos(100,100),
-        scale(4),
-        'centipede'
-    ])
+    const centipedeMon = add([sprite('mini-mons'), area(), body({isStatic: true}), pos(100,100), scale(4), 'centipede'])
     centipedeMon.play('centipede')
 
-    const grassMon = add([
-        sprite('mini-mons'), 
-        area(),
-        body({isStatic: true}),
-        pos(900, 570),
-        scale(4),
-        'grass'
-    ])
+    const grassMon = add([sprite('mini-mons'), area(), body({isStatic: true}), pos(900, 570), scale(4), 'grass'])
     grassMon.play('grass')
+
+    add([ sprite('npc'), scale(4), pos(600,700), area(), body({isStatic: true}), 'npc'])
 
     const player = add([
         sprite('player-down'),
@@ -180,28 +153,18 @@ function setWorld(worldState, playerObj) {
         },
     ])
 
-    if (!worldState) {
-        worldState = {
-            playerPos : player.pos,
-            faintedMons: []
+    let tick = 0
+    onUpdate(() => {
+        camPos(player.pos)
+        tick++
+        if ((isKeyDown('down') || isKeyDown('up')) 
+        && tick % 20 === 0 
+        && !player.isInDialogue) {
+            player.flipX = !player.flipX
         }
-    }
+    })
 
-    player.pos = vec2(worldState.playerPos)
-    for (const faintedMon of worldState.faintedMons) {
-        destroy(get(faintedMon)[0])
-    }
-
-    add([
-        sprite('npc'),
-        scale(4),
-        pos(600,700),
-        area(),
-        body({isStatic: true}),
-        'npc'
-    ])
-
-    function setSprite(spriteName) {
+    function setSprite(player, spriteName) {
         if (player.currentSprite !== spriteName) {
             player.use(sprite(spriteName))
             player.currentSprite = spriteName
@@ -209,54 +172,35 @@ function setWorld(worldState, playerObj) {
     }
 
     onKeyDown('down', () => {
-
-        if (player.isInDialogue) {
-            return
-        }
-
-        setSprite('player-down')
+        if (player.isInDialogue) return
+        setSprite(player, 'player-down')
         player.move(0, player.speed)
     })
 
     onKeyDown('up', () => {
-
-        if (player.isInDialogue) {
-            return
-        }
-
-        setSprite('player-up')
+        if (player.isInDialogue) return
+        setSprite(player, 'player-up')
         player.move(0, -player.speed)
     })
 
     onKeyDown('left', () => {
-
-        if (player.isInDialogue) {
-            return
-        }
-
-        setSprite('player-side')
+        if (player.isInDialogue) return
         player.flipX = false
         if (player.curAnim() !== 'walk') {
+            setSprite(player, 'player-side')
             player.play('walk')
         }
-
-
         player.move(-player.speed, 0)
 
     })
 
     onKeyDown('right', () => {
-
-        if (player.isInDialogue) {
-            return
-        }
-
-        setSprite('player-side')
+        if (player.isInDialogue) return
         player.flipX = true
         if (player.curAnim() !== 'walk') {
+            setSprite(player, 'player-side')
             player.play('walk')
         }
-
         player.move(player.speed, 0)
     })
 
@@ -269,33 +213,28 @@ function setWorld(worldState, playerObj) {
         player.stop()
     })
 
-    let tick = 0
-    onUpdate(() => {
-        camPos(player.pos)
-        tick++
-        if ((isKeyDown('down') || isKeyDown('up')) 
-        && tick % 20 === 0 
-        && !player.isInDialogue) {
-            player.flipX = !player.flipX
+    if (!worldState) {
+        worldState = {
+            playerPos : player.pos,
+            faintedMons: []
         }
-    })
+    }
 
-    const container = add([
-        fixed(),
-    ])
+    player.pos = vec2(worldState.playerPos)
+    for (const faintedMon of worldState.faintedMons) {
+        destroy(get(faintedMon)[0])
+    }
 
     player.onCollide('npc', () => {
         player.isInDialogue = true
-        
-        const dialogueBox = container.add([
+        const dialogueBoxFixedContainer = add([fixed()])
+        const dialogueBox = dialogueBoxFixedContainer.add([
             rect(1000, 200),
             outline(5),
             pos(150, 500),
             fixed()
         ])
-
         const dialogue = "Defeat all monsters on this island and you'll become the champion!"
-
         const content = dialogueBox.add([
             text('', 
             {
@@ -322,7 +261,6 @@ function setWorld(worldState, playerObj) {
         })
     })
 
-    
     function flashScreen() {
         const flash = add([rect(1280, 720), color(10,10,10), fixed(), opacity(0)])
         tween(flash.opacity, 1, 0.5, (val) => flash.opacity = val, easings.easeInBounce)
@@ -345,5 +283,4 @@ function setWorld(worldState, playerObj) {
     onCollideWithPlayer('spider', player, worldState)
     onCollideWithPlayer('centipede', player, worldState)
     onCollideWithPlayer('grass', player, worldState)
-
 }
