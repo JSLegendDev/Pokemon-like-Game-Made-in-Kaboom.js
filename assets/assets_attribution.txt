@@ -1,0 +1,4 @@
+characters.png was obtained from : https://axulart.itch.io/microscopic-sprites-axulart
+tiles.png was obtained from : https://axulart.itch.io/axularts-beach-and-caves-tileset
+
+Those assets are licensed under : https://creativecommons.org/licenses/by-sa/4.0/
