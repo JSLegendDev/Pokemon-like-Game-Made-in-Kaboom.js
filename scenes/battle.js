@@ -156,7 +156,7 @@ function setBattle(worldState) {
             return
         }
 
-        if (phase === 'player-turn' && !playerMon.fainted) {
+        if (phase === 'player-turn') {
             const damageDealt = Math.random() * 230
 
             if (damageDealt > 150) {
