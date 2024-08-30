@@ -1,14 +1,14 @@
 kaboom({
-    width: 1280,
-    height: 720,
-    scale: 0.7
-})
+  width: 1280,
+  height: 720,
+  scale: 0.7,
+});
 
-setBackground(Color.fromHex('#36A6E0'))
+setBackground(Color.fromHex("#36A6E0"));
 
-loadAssets()
+loadAssets();
 
-scene('world', (worldState) => setWorld(worldState))
-scene('battle', (worldState) => setBattle(worldState))  
+scene("world", (worldState) => setWorld(worldState));
+scene("battle", (worldState) => setBattle(worldState));
 
-go('world')
+go("world");
